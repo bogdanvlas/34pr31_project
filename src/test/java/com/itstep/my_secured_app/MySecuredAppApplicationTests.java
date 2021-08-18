@@ -11,7 +11,7 @@ class MySecuredAppApplicationTests {
     @Test
     void myTest() {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String rawString = "user";
+        String rawString = "admin";
         String encodedString = passwordEncoder.encode(rawString);
         System.out.println(encodedString);
         System.out.println(passwordEncoder.matches(rawString, encodedString));
