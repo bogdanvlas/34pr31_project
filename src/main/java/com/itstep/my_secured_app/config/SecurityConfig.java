@@ -34,6 +34,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().loginPage("/login")
                 .and()
+                .rememberMe().userDetailsService(userSecurityDetailsService)
+                .and()
+                .exceptionHandling().accessDeniedPage("/login?error=denied")
+                .and()
                 .logout()
                 .and()
                 .csrf().disable();//использовать дефолтную форму для выхода
