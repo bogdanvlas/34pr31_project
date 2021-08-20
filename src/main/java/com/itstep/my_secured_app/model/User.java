@@ -2,10 +2,8 @@ package com.itstep.my_secured_app.model;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -21,6 +19,10 @@ public class User {
     private String password;
     private String role;
     private String email;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Note> notes;
 }
 
 
