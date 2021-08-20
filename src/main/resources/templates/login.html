@@ -8,7 +8,7 @@
 <h2>Log in, please</h2>
 <form action="/login" method="post">
     <div>
-        <input type="text" name="username">
+        <input type="text" name="username" id="username">
     </div>
     <div>
         <input type="password" name="password">
@@ -20,6 +20,26 @@
         <input type="submit" value="Log In">
     </div>
 </form>
-<a href="/signup">No account yet? Sign up</a>
+<div>
+    <a href="/signup">No account yet? Sign up</a>
+</div>
+<div>
+    <a href="#" onclick="forgotPassword(); alert('New password sent on you email!;')">
+        Forgot password</a>
+</div>
+<script type="text/javascript">
+    async function forgotPassword() {
+        let username = document.getElementById("username").value
+        let url = "/forgot-psw"
+        let body = {username: username}
+        await fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(body)
+        })
+    }
+</script>
 </body>
 </html>
