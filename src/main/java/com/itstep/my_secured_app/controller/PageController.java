@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Random;
@@ -75,14 +72,27 @@ public class PageController {
         ConfirmationToken token = new ConfirmationToken(user);
         tokenRepository.save(token);
         //сформировать ссылку, перейдя по которой пользователь активирует аккаунт
-        String url = "http://localhost:8080/confirm?token=" + token.getValue();
+        String url = "http://localhost:8080/confirm?tokenValue=" + token.getValue();
         //отправить ссылку пользователю в писме на почту
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setTo(user.getEmail());
         mail.setText("Visit this link to complete registration: " + url);
         mail.setSubject("Confirm account");
         mail.setFrom("34PR31");
+        mailService.sendEmail(mail);
         return "redirect:/";
+    }
+
+    @GetMapping("/confirm")
+    public String activateAccount(@RequestParam String tokenValue) {
+        var token = tokenRepository.findByValue(tokenValue);
+        if (token != null) {
+            User user = token.getUser();
+            user.setEnabled(true);
+            userRepository.save(user);
+            tokenRepository.delete(token);
+        }
+        return "redirect:/login";
     }
 
     @PostMapping("/forgot-psw")
