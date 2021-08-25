@@ -1,7 +1,9 @@
 package com.itstep.my_secured_app.controller;
 
 import com.itstep.my_secured_app.model.ConfirmationToken;
+import com.itstep.my_secured_app.model.Role;
 import com.itstep.my_secured_app.model.User;
+import com.itstep.my_secured_app.repository.RoleRepository;
 import com.itstep.my_secured_app.repository.TokenRepository;
 import com.itstep.my_secured_app.repository.UserRepository;
 import com.itstep.my_secured_app.service.MailService;
@@ -21,6 +23,8 @@ public class PageController {
     private UserRepository userRepository;
 
     private PasswordEncoder passwordEncoder;
+
+    private RoleRepository roleRepository;
 
     private TokenRepository tokenRepository;
 
@@ -62,7 +66,8 @@ public class PageController {
         }
         //если свободен, то закодировать пароль, присвоить роль
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("USER");
+        Role role= roleRepository.findByName("USER");
+        user.setRole(role);
         user.setEnabled(false);
         //записать пользователя в БД
         user = userRepository.save(user);

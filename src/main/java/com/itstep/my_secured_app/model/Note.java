@@ -19,3 +19,6 @@ public class Note {
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 }
+
+
+//1 - добавить в класс Заметка поля: время создания и время последней модификации

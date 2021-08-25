@@ -18,7 +18,9 @@ public class User {
     @Column(unique = true)
     private String username;
     private String password;
-    private String role;
+    //вынести роль в отдельную сущность
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Role role;
     @Column(unique = true)
     private String email;
     private boolean enabled;
