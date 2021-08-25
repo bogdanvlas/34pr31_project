@@ -1,6 +1,8 @@
 package com.itstep.my_secured_app.controller;
 
+import com.itstep.my_secured_app.model.ConfirmationToken;
 import com.itstep.my_secured_app.model.User;
+import com.itstep.my_secured_app.repository.TokenRepository;
 import com.itstep.my_secured_app.repository.UserRepository;
 import com.itstep.my_secured_app.service.MailService;
 import lombok.AllArgsConstructor;
@@ -22,6 +24,8 @@ public class PageController {
     private UserRepository userRepository;
 
     private PasswordEncoder passwordEncoder;
+
+    private TokenRepository tokenRepository;
 
     private MailService mailService;
 
@@ -62,8 +66,22 @@ public class PageController {
         //если свободен, то закодировать пароль, присвоить роль
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("USER");
+        user.setEnabled(false);
         //записать пользователя в БД
-        userRepository.save(user);
+        user = userRepository.save(user);
+
+        //создать уникальный токен для подтверждения регистрации
+        //привязать этот токен к новому пользователю
+        ConfirmationToken token = new ConfirmationToken(user);
+        tokenRepository.save(token);
+        //сформировать ссылку, перейдя по которой пользователь активирует аккаунт
+        String url = "http://localhost:8080/confirm?token=" + token.getValue();
+        //отправить ссылку пользователю в писме на почту
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setTo(user.getEmail());
+        mail.setText("Visit this link to complete registration: " + url);
+        mail.setSubject("Confirm account");
+        mail.setFrom("34PR31");
         return "redirect:/";
     }
 
