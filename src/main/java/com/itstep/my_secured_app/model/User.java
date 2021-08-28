@@ -3,7 +3,9 @@ package com.itstep.my_secured_app.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -28,6 +30,21 @@ public class User {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<Note> notes;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "subscriptions",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id")
+    )
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Event> events = new HashSet<>();
+
+
+    public void subscribe(Event event) {
+        this.events.add(event);
+        event.getSubscribers().add(this);
+    }
 }
 
 

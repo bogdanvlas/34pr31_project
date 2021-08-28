@@ -1,8 +1,6 @@
 package com.itstep.my_secured_app.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -17,5 +15,7 @@ public class Role {
     private int id;
     private String name;
     @OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<User> users;
 }
