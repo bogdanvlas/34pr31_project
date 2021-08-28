@@ -1,6 +1,7 @@
 package com.itstep.my_secured_app.service;
 
 import com.itstep.my_secured_app.model.User;
+import com.itstep.my_secured_app.model.UserSecurity;
 import com.itstep.my_secured_app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,12 +22,7 @@ public class UserSecurityDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
         if (user == null) throw new UsernameNotFoundException(username);
-        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .roles(user.getRole().getName())
-                .disabled(!user.isEnabled())
-                .build();
+        UserDetails userDetails = new UserSecurity(user);
         return userDetails;
     }
 }
