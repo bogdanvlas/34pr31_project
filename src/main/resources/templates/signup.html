@@ -7,8 +7,7 @@
 <body>
 <!--форма для регистрации-->
 <h2>Sign up, please!</h2>
-<form id="form" action="/signup" method="post"
-      onsubmit="return validateForm()">
+<form id="form" action="/signup" method="post">
     <div>
         <input type="text" name="username" placeholder="Username">
     </div>
@@ -20,11 +19,12 @@
         >
     </div>
     <div>
-        <input type="email" name="email" placeholder="abc123@mail.com"
-        >
+        <input type="email" name="email" placeholder="abc123@mail.com">
     </div>
     <div>
-        <input type="submit" value="Sign Up">
+        <button type="button" value="Sign up" onclick="return submitForm()">
+            Sign Up
+        </button>
     </div>
 </form>
 <a href="/login">Have account already? Sign in!</a>
