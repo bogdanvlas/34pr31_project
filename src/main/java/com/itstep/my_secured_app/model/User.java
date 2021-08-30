@@ -21,8 +21,12 @@ public class User {
     private String username;
     private String password;
     //вынести роль в отдельную сущность
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Role role;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
     @Column(unique = true)
     private String email;
     private boolean enabled;
@@ -44,6 +48,11 @@ public class User {
     public void subscribe(Event event) {
         this.events.add(event);
         event.getSubscribers().add(this);
+    }
+
+    public void addRole(Role role){
+        this.roles.add(role);
+        role.getUsers().add(this);
     }
 }
 

@@ -66,8 +66,8 @@ public class PageController {
         }
         //если свободен, то закодировать пароль, присвоить роль
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Role role= roleRepository.findByName("USER");
-        user.setRole(role);
+        Role role = roleRepository.findByName("USER");
+        user.addRole(role);
         user.setEnabled(false);
         //записать пользователя в БД
         user = userRepository.save(user);
