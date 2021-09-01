@@ -2,6 +2,7 @@ let f = document.getElementById("form")
 
 async function submitForm() {
     if (await validateForm()) {
+        f.url.value = window.location.href
         f.submit()
         return true
     }
@@ -10,18 +11,25 @@ async function submitForm() {
 
 async function validateForm() {
     let username = f.username
+    let email = f.email
+
     if (username.value == "" || !username.value.match("[a-zA-Z0-9_]+")) {
         username.focus()
         alert("Enter your username")
         return false
     }
-    let response = await fetch("/api/usernames")
-    let usernames = await response.json()
+    let response = await fetch("/api/users")
+    let users = await response.json()
 
-    for (let i = 0; i < usernames.length; i++) {
-        if (username.value == usernames[i]) {
+    for (let i = 0; i < users.length; i++) {
+        if (username.value == users[i].username) {
             username.focus()
             alert("This username is already used")
+            return false
+        }
+        if (email.value == users[i].email) {
+            email.focus()
+            alert("This email is already used")
             return false
         }
     }
@@ -42,7 +50,6 @@ async function validateForm() {
         alert("Confirm password doesn't match!")
         return false
     }
-    let email = f.email
     if (email.value == "" || !email.value.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$")) {
         email.focus()
         alert("Enter your email")

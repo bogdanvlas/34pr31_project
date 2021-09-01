@@ -5,15 +5,21 @@ import com.itstep.my_secured_app.model.User;
 import com.itstep.my_secured_app.repository.NoteRepository;
 import com.itstep.my_secured_app.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilderDsl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.hateoas.EntityModel;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-@Controller
+@RestController
 @RequestMapping("/notes")
 @AllArgsConstructor
 public class NoteController {
@@ -21,16 +27,31 @@ public class NoteController {
 
     private NoteRepository noteRepository;
 
-    @GetMapping
-    public String notesPage(Model model, Principal prl) {
-        String username = prl.getName();
-        User user = userRepository.findByUsername(username);
-        Iterable<Note> notes = user.getNotes();
-        model.addAttribute("notes", notes);
-        return "notesPage";
+    @GetMapping("/all")
+    public List<EntityModel<Note>> getNotes(Principal prl) {
+        User user = userRepository.findByUsername(prl.getName());
+        List<Note> notes = (List<Note>) noteRepository.findAll();
+        Function<Note, EntityModel<Note>> mapper = n -> {
+            return EntityModel.of(
+                    n,
+                    linkTo(
+                            methodOn(NoteController.class).getNote(n.getId()))
+                            .withRel("info")
+            );
+        };
+        List<EntityModel<Note>> results = notes.stream()
+                .map(mapper).collect(Collectors.toList());
+        return results;
+    }
+
+
+    @GetMapping("/{id}")
+    public EntityModel<Note> getNote(@PathVariable int id) {
+        Note note = noteRepository.findById(id).get();
+        EntityModel<Note> result = EntityModel.of(
+                note,
+                linkTo(NoteController.class).withRel("notes")
+        );
+        return result;
     }
 }
-
-//доделать операции NoteController в привязке к конкретному пользователю
-
-//добавить возможность изменения пароля для авторизованного пользователя

@@ -1,1 +1,4 @@
-GET http://localhost:8080/api/usernames
+GET http://localhost:8080/api/users
+
+###
+GET http://localhost:8080/notes/1

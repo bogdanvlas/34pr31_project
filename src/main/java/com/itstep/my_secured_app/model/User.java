@@ -1,5 +1,6 @@
 package com.itstep.my_secured_app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,6 +20,7 @@ public class User {
     private int id;
     @Column(unique = true)
     private String username;
+    @JsonIgnore
     private String password;
     //вынести роль в отдельную сущность
     @ManyToMany(fetch = FetchType.EAGER)
@@ -26,13 +28,16 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+    @JsonIgnore
     private Set<Role> roles = new HashSet<>();
     @Column(unique = true)
     private String email;
+    @JsonIgnore
     private boolean enabled;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private List<Note> notes;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -42,6 +47,7 @@ public class User {
     )
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private Set<Event> events = new HashSet<>();
 
 

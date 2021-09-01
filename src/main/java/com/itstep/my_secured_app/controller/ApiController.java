@@ -26,4 +26,9 @@ public class ApiController {
                 .collect(Collectors.toList());
         return usernames;
     }
+
+    @GetMapping("/users")
+    public Iterable<User> getUsers(){
+        return userRepository.findAll();
+    }
 }

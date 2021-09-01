@@ -1,6 +1,7 @@
 package com.itstep.my_secured_app.controller;
 
 import com.itstep.my_secured_app.model.ConfirmationToken;
+import com.itstep.my_secured_app.model.Note;
 import com.itstep.my_secured_app.model.Role;
 import com.itstep.my_secured_app.model.User;
 import com.itstep.my_secured_app.repository.RoleRepository;
@@ -12,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Map;
 import java.util.Random;
 
@@ -58,7 +61,7 @@ public class PageController {
 
     //принимаю данные пользователя
     @PostMapping("/signup")
-    public String signup(@ModelAttribute User user) {
+    public String signup(@ModelAttribute User user, @RequestParam String url) {
         //проверить, свободен ли логин
         if (userRepository.findByUsername(user.getUsername()) != null) {
             //если занят, то перенаправить обратно на страницу регистрации
@@ -77,7 +80,8 @@ public class PageController {
         ConfirmationToken token = new ConfirmationToken(user);
         tokenRepository.save(token);
         //сформировать ссылку, перейдя по которой пользователь активирует аккаунт
-        String url = "http://localhost:8080/confirm?tokenValue=" + token.getValue();
+        url = url.replace("signup", "confirm");
+        url = url + "?tokenValue=" + token.getValue();
         //отправить ссылку пользователю в писме на почту
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setTo(user.getEmail());
@@ -130,5 +134,10 @@ public class PageController {
             sb.append(chars.charAt(rnd.nextInt(chars.length())));
         }
         return sb.toString();
+    }
+
+    @GetMapping("/notes")
+    public String notesPage() {
+        return "notesPage";
     }
 }
