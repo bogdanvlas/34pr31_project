@@ -35,7 +35,7 @@ public class NoteController {
             return EntityModel.of(
                     n,
                     linkTo(
-                            methodOn(NoteController.class).getNote(n.getId()))
+                            methodOn(NoteController.class).getNote(prl, n.getId()))
                             .withRel("info")
             );
         };
@@ -45,13 +45,16 @@ public class NoteController {
     }
 
 
-    @GetMapping("/{id}")
-    public EntityModel<Note> getNote(@PathVariable int id) {
+    @GetMapping("/get/{id}")
+    public EntityModel<Note> getNote(Principal prl, @PathVariable int id) {
         Note note = noteRepository.findById(id).get();
         EntityModel<Note> result = EntityModel.of(
                 note,
-                linkTo(NoteController.class).withRel("notes")
+                linkTo(methodOn(NoteController.class).getNotes(prl)).withRel("notes")
         );
         return result;
     }
+    //доделать рест-контроллер с использованием HATEOAS (отправлять набор ссылок)
+    //аторизовать доступ к заметкам
+    //используя Document Object Model реализовать клиента, который обращается к АПИ
 }
